@@ -68,7 +68,30 @@ FACULTY_URLS = [
         "university": "Massachusetts Institute of Technology Sloan",
         "discipline": "Business & Finance",
         "url": "https://mitsloan.mit.edu/faculty/faculty-directory"
-    }
+    },
+    {
+        "university": "Stanford University",
+        "discipline": "Electrical Engineering",
+        "url": "https://ee.stanford.edu/faculty",
+    },
+
+    {
+        "university": "Georgia Tech",
+        "discipline": "Electrical Engineering",
+        "url": "https://ece.gatech.edu/faculty",
+    },
+
+    {
+        "university": "University of Michigan",
+        "discipline": "Electrical Engineering",
+        "url": "https://ece.engin.umich.edu/people/faculty/",
+    },
+
+    {
+        "university": "UIUC",
+        "discipline": "Electrical Engineering",
+        "url": "https://ece.illinois.edu/about/directory/faculty",
+    },
 ]
 
 

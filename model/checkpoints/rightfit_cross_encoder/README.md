@@ -4,7 +4,7 @@ tags:
 - cross-encoder
 - reranker
 - generated_from_trainer
-- dataset_size:160
+- dataset_size:800
 - loss:BinaryCrossEntropyLoss
 base_model: cross-encoder/ms-marco-MiniLM-L6-v2
 pipeline_tag: text-ranking
@@ -28,25 +28,25 @@ model-index:
       type: rightfit-validation
     metrics:
     - type: accuracy
-      value: 0.9
+      value: 0.995
       name: Accuracy
     - type: accuracy_threshold
-      value: 3.001263380050659
+      value: -0.8998703956604004
       name: Accuracy Threshold
     - type: f1
-      value: 0.9130434782608695
+      value: 0.9937888198757764
       name: F1
     - type: f1_threshold
-      value: 0.7558400630950928
+      value: -0.8998703956604004
       name: F1 Threshold
     - type: precision
-      value: 0.875
+      value: 0.9876543209876543
       name: Precision
     - type: recall
-      value: 0.9545454545454546
+      value: 1.0
       name: Recall
     - type: average_precision
-      value: 0.963438712443075
+      value: 0.9995312011642444
       name: Average Precision
 ---
 
@@ -99,25 +99,25 @@ from sentence_transformers import CrossEncoder
 model = CrossEncoder("cross_encoder_model_id")
 # Get scores for pairs of inputs
 pairs = [
-    ['I am interested in computational biology, neuroscience, and biomedical engineering. My projects focus on AI-driven applications and research systems.', 'Research interests include wireless communications, cyber-physical systems, embedded systems, and signal processing. Current work focuses on advanced interdisciplinary research.'],
-    ['I am interested in investment systems, data analytics, and business intelligence. My projects focus on AI-driven applications and research systems.', 'Research interests include computer vision, recommendation systems, information retrieval, and natural language processing. Current work focuses on advanced interdisciplinary research.'],
-    ['I am interested in sensors, circuits, and control systems. My projects focus on AI-driven applications and research systems.', 'Research interests include risk modeling, business intelligence, economics, and investment systems. Current work focuses on advanced interdisciplinary research.'],
-    ['I am interested in natural language processing, security, and machine learning. My projects focus on AI-driven applications and research systems.', 'Research interests include wireless communications, power systems, embedded systems, and cyber-physical systems. Current work focuses on advanced interdisciplinary research.'],
-    ['I am interested in business intelligence, risk modeling, and economics. My projects focus on AI-driven applications and research systems.', 'Research interests include investment systems, economics, market prediction, and business intelligence. Current work focuses on advanced interdisciplinary research.'],
+    ['I am interested in large language models, AI for healthcare, and computer vision. My previous projects involve applied research, data analysis, and building practical systems.', 'Dr. Cameron Moore is a faculty member at Stanford University. Research interests include AI for healthcare, recommendation systems, data mining, and cybersecurity. Recent work focuses on interdisciplinary research methods, scalable systems, and real-world applications.'],
+    ['I am interested in platform strategy, data analytics, and market prediction. My previous projects involve applied research, data analysis, and building practical systems.', 'Dr. Kevin Garcia is a faculty member at Johns Hopkins University. Research interests include medical imaging, health informatics, wearable health devices, and drug discovery. Recent work focuses on interdisciplinary research methods, scalable systems, and real-world applications.'],
+    ['I am interested in financial analytics, investment systems, and business intelligence. My previous projects involve applied research, data analysis, and building practical systems.', 'Dr. Leo Chen is a faculty member at Johns Hopkins University. Research interests include precision medicine, neuroscience, wearable health devices, and biomedical engineering. Recent work focuses on interdisciplinary research methods, scalable systems, and real-world applications.'],
+    ['I am interested in computational biology, genomics, and drug discovery. My previous projects involve applied research, data analysis, and building practical systems.', 'Dr. Drew Nelson is a faculty member at University of Pennsylvania. Research interests include operations research, business intelligence, financial analytics, and marketing analytics. Recent work focuses on interdisciplinary research methods, scalable systems, and real-world applications.'],
+    ['I am interested in circuits, wireless communications, and signal processing. My previous projects involve applied research, data analysis, and building practical systems.', 'Dr. Lina Lewis is a faculty member at University of Pennsylvania. Research interests include data analytics, operations research, financial analytics, and economics. Recent work focuses on interdisciplinary research methods, scalable systems, and real-world applications.'],
 ]
 scores = model.predict(pairs)
 print(scores)
-# [-3.7655 -0.6616 -2.8264 -3.5969  6.9191]
+# [  5.565   -9.9977 -11.0344 -11.0684 -10.6059]
 
 # Or rank different texts based on similarity to a single text
 ranks = model.rank(
-    'I am interested in computational biology, neuroscience, and biomedical engineering. My projects focus on AI-driven applications and research systems.',
+    'I am interested in large language models, AI for healthcare, and computer vision. My previous projects involve applied research, data analysis, and building practical systems.',
     [
-        'Research interests include wireless communications, cyber-physical systems, embedded systems, and signal processing. Current work focuses on advanced interdisciplinary research.',
-        'Research interests include computer vision, recommendation systems, information retrieval, and natural language processing. Current work focuses on advanced interdisciplinary research.',
-        'Research interests include risk modeling, business intelligence, economics, and investment systems. Current work focuses on advanced interdisciplinary research.',
-        'Research interests include wireless communications, power systems, embedded systems, and cyber-physical systems. Current work focuses on advanced interdisciplinary research.',
-        'Research interests include investment systems, economics, market prediction, and business intelligence. Current work focuses on advanced interdisciplinary research.',
+        'Dr. Cameron Moore is a faculty member at Stanford University. Research interests include AI for healthcare, recommendation systems, data mining, and cybersecurity. Recent work focuses on interdisciplinary research methods, scalable systems, and real-world applications.',
+        'Dr. Kevin Garcia is a faculty member at Johns Hopkins University. Research interests include medical imaging, health informatics, wearable health devices, and drug discovery. Recent work focuses on interdisciplinary research methods, scalable systems, and real-world applications.',
+        'Dr. Leo Chen is a faculty member at Johns Hopkins University. Research interests include precision medicine, neuroscience, wearable health devices, and biomedical engineering. Recent work focuses on interdisciplinary research methods, scalable systems, and real-world applications.',
+        'Dr. Drew Nelson is a faculty member at University of Pennsylvania. Research interests include operations research, business intelligence, financial analytics, and marketing analytics. Recent work focuses on interdisciplinary research methods, scalable systems, and real-world applications.',
+        'Dr. Lina Lewis is a faculty member at University of Pennsylvania. Research interests include data analytics, operations research, financial analytics, and economics. Recent work focuses on interdisciplinary research methods, scalable systems, and real-world applications.',
     ]
 )
 # [{'corpus_id': ..., 'score': ...}, {'corpus_id': ..., 'score': ...}, ...]
@@ -158,13 +158,13 @@ You can finetune this model on your own dataset.
 
 | Metric                | Value      |
 |:----------------------|:-----------|
-| accuracy              | 0.9        |
-| accuracy_threshold    | 3.0013     |
-| f1                    | 0.913      |
-| f1_threshold          | 0.7558     |
-| precision             | 0.875      |
-| recall                | 0.9545     |
-| **average_precision** | **0.9634** |
+| accuracy              | 0.995      |
+| accuracy_threshold    | -0.8999    |
+| f1                    | 0.9938     |
+| f1_threshold          | -0.8999    |
+| precision             | 0.9877     |
+| recall                | 1.0        |
+| **average_precision** | **0.9995** |
 
 <!--
 ## Bias, Risks and Limitations
@@ -184,20 +184,20 @@ You can finetune this model on your own dataset.
 
 #### Unnamed Dataset
 
-* Size: 160 training samples
+* Size: 800 training samples
 * Columns: <code>sentence_0</code>, <code>sentence_1</code>, and <code>label</code>
 * Approximate statistics based on the first 100 samples:
   |          | sentence_0                                                                         | sentence_1                                                                         | label                                                          |
   |:---------|:-----------------------------------------------------------------------------------|:-----------------------------------------------------------------------------------|:---------------------------------------------------------------|
   | type     | string                                                                             | string                                                                             | float                                                          |
   | modality | text                                                                               | text                                                                               |                                                                |
-  | details  | <ul><li>min: 26 tokens</li><li>mean: 27.85 tokens</li><li>max: 30 tokens</li></ul> | <ul><li>min: 24 tokens</li><li>mean: 25.84 tokens</li><li>max: 28 tokens</li></ul> | <ul><li>min: 0.0</li><li>mean: 0.56</li><li>max: 1.0</li></ul> |
+  | details  | <ul><li>min: 29 tokens</li><li>mean: 31.37 tokens</li><li>max: 35 tokens</li></ul> | <ul><li>min: 45 tokens</li><li>mean: 49.51 tokens</li><li>max: 53 tokens</li></ul> | <ul><li>min: 0.0</li><li>mean: 0.39</li><li>max: 1.0</li></ul> |
 * Samples:
-  | sentence_0                                                                                                                                                         | sentence_1                                                                                                                                                                                            | label            |
-  |:-------------------------------------------------------------------------------------------------------------------------------------------------------------------|:------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|:-----------------|
-  | <code>I am interested in computational biology, neuroscience, and biomedical engineering. My projects focus on AI-driven applications and research systems.</code> | <code>Research interests include wireless communications, cyber-physical systems, embedded systems, and signal processing. Current work focuses on advanced interdisciplinary research.</code>        | <code>0.0</code> |
-  | <code>I am interested in investment systems, data analytics, and business intelligence. My projects focus on AI-driven applications and research systems.</code>   | <code>Research interests include computer vision, recommendation systems, information retrieval, and natural language processing. Current work focuses on advanced interdisciplinary research.</code> | <code>0.0</code> |
-  | <code>I am interested in sensors, circuits, and control systems. My projects focus on AI-driven applications and research systems.</code>                          | <code>Research interests include risk modeling, business intelligence, economics, and investment systems. Current work focuses on advanced interdisciplinary research.</code>                         | <code>0.0</code> |
+  | sentence_0                                                                                                                                                                                        | sentence_1                                                                                                                                                                                                                                                                                             | label            |
+  |:--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|:-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|:-----------------|
+  | <code>I am interested in large language models, AI for healthcare, and computer vision. My previous projects involve applied research, data analysis, and building practical systems.</code>      | <code>Dr. Cameron Moore is a faculty member at Stanford University. Research interests include AI for healthcare, recommendation systems, data mining, and cybersecurity. Recent work focuses on interdisciplinary research methods, scalable systems, and real-world applications.</code>             | <code>1.0</code> |
+  | <code>I am interested in platform strategy, data analytics, and market prediction. My previous projects involve applied research, data analysis, and building practical systems.</code>           | <code>Dr. Kevin Garcia is a faculty member at Johns Hopkins University. Research interests include medical imaging, health informatics, wearable health devices, and drug discovery. Recent work focuses on interdisciplinary research methods, scalable systems, and real-world applications.</code>  | <code>0.0</code> |
+  | <code>I am interested in financial analytics, investment systems, and business intelligence. My previous projects involve applied research, data analysis, and building practical systems.</code> | <code>Dr. Leo Chen is a faculty member at Johns Hopkins University. Research interests include precision medicine, neuroscience, wearable health devices, and biomedical engineering. Recent work focuses on interdisciplinary research methods, scalable systems, and real-world applications.</code> | <code>0.0</code> |
 * Loss: [<code>BinaryCrossEntropyLoss</code>](https://sbert.net/docs/package_reference/cross_encoder/losses.html#binarycrossentropyloss) with these parameters:
   ```json
   {
@@ -320,13 +320,13 @@ You can finetune this model on your own dataset.
 ### Training Logs
 | Epoch | Step | rightfit-validation_average_precision |
 |:-----:|:----:|:-------------------------------------:|
-| 1.0   | 10   | 0.9590                                |
-| 2.0   | 20   | 0.9616                                |
-| 3.0   | 30   | 0.9634                                |
+| 1.0   | 50   | 0.9991                                |
+| 2.0   | 100  | 0.9995                                |
+| 3.0   | 150  | 0.9995                                |
 
 
 ### Training Time
-- **Training**: 52.6 seconds
+- **Training**: 4.9 minutes
 
 ### Framework Versions
 - Python: 3.13.0
