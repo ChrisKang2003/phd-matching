@@ -1,19 +1,21 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
+FRONTEND_DIST = ROOT / "web" / "frontend" / "dist"
+
 sys.path.append(str(ROOT / "model"))
 
 from classify_discipline import classify_discipline
 from rank_professors import rank_professors
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder=str(FRONTEND_DIST), static_url_path="")
 CORS(app)
 
 
-@app.route("/health", methods=["GET"])
+@app.route("/api/health", methods=["GET"])
 def health():
     return jsonify({"status": "ok"})
 
@@ -52,5 +54,21 @@ def recommend():
     })
 
 
+@app.route("/", defaults={"path": ""})
+@app.route("/<path:path>")
+def serve_frontend(path):
+    if path and (FRONTEND_DIST / path).exists():
+        return send_from_directory(FRONTEND_DIST, path)
+
+    return send_from_directory(FRONTEND_DIST, "index.html")
+
+
 if __name__ == "__main__":
-    app.run(debug=True, port=5000)
+    if not FRONTEND_DIST.exists():
+        print("Frontend build not found.")
+        print("Run this first:")
+        print("cd web/frontend")
+        print("npm install")
+        print("npm run build")
+    else:
+        app.run(debug=True, port=5000)

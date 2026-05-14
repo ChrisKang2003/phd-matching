@@ -1,49 +1,32 @@
 print("train_model.py started")
 
-print("Importing os...")
 import os
-
-print("Importing torch DataLoader...")
+import shutil
 from torch.utils.data import DataLoader
-
-print("Importing CrossEncoder...")
 from sentence_transformers import CrossEncoder
-
-print("Importing evaluator...")
 from sentence_transformers.cross_encoder.evaluation import CEBinaryClassificationEvaluator
 
-print("Importing project files...")
 from config import ModelConfig
 from dataset import load_pairs, make_examples, split_dataset
 
-print("All imports completed")
-
 
 def main():
-    print("Loading config...")
     config = ModelConfig()
 
-    print(f"Looking for dataset at: {config.data_path}")
-
     if not os.path.exists(config.data_path):
-        raise FileNotFoundError(
-            f"Training CSV not found: {config.data_path}\n"
-            "Move your CSV to data/training_pairs/student_professor_pairs.csv"
-        )
+        raise FileNotFoundError(f"Missing training CSV: {config.data_path}")
+
+    # Clear broken old checkpoint
+    if os.path.exists(config.output_dir):
+        shutil.rmtree(config.output_dir)
 
     os.makedirs(config.output_dir, exist_ok=True)
 
     print("Loading dataset...")
     df = load_pairs(config)
-
     print(f"Loaded {len(df)} rows")
-    print(df.head())
 
     train_df, test_df = split_dataset(df, config)
-
-    print(f"Training examples: {len(train_df)}")
-    print(f"Testing examples: {len(test_df)}")
-
     train_examples = make_examples(train_df, config)
     test_examples = make_examples(test_df, config)
 
@@ -53,7 +36,7 @@ def main():
         batch_size=config.batch_size
     )
 
-    print("Loading MiniLM cross-encoder...")
+    print("Loading base model...")
     model = CrossEncoder(
         config.base_model,
         num_labels=1,
@@ -67,18 +50,27 @@ def main():
 
     warmup_steps = int(len(train_loader) * config.epochs * 0.1)
 
-    print("Fine-tuning model...")
+    print("Training...")
     model.fit(
         train_dataloader=train_loader,
         evaluator=evaluator,
         epochs=config.epochs,
         warmup_steps=warmup_steps,
         optimizer_params={"lr": config.learning_rate},
-        output_path=config.output_dir,
-        save_best_model=True
+        save_best_model=True,
+        output_path=config.output_dir
     )
 
-    print(f"Saved best model to {config.output_dir}")
+    print("Force-saving final model...")
+    model.save(config.output_dir)
+
+    print(f"Model saved to: {config.output_dir}")
+
+    expected_config = os.path.join(config.output_dir, "config.json")
+    if not os.path.exists(expected_config):
+        raise RuntimeError("Model did not save correctly: config.json missing")
+
+    print("Model save verified.")
 
 
 if __name__ == "__main__":
