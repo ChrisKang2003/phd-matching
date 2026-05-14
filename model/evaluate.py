@@ -1,6 +1,6 @@
 import pandas as pd
 from sentence_transformers import CrossEncoder
-from config import ModelConfig
+from model.config import ModelConfig
 
 
 def recall_at_k(df: pd.DataFrame, k: int = 5) -> float:

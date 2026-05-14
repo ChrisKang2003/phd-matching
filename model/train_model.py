@@ -1,18 +1,44 @@
+print("train_model.py started")
+
+print("Importing os...")
 import os
+
+print("Importing torch DataLoader...")
 from torch.utils.data import DataLoader
+
+print("Importing CrossEncoder...")
 from sentence_transformers import CrossEncoder
+
+print("Importing evaluator...")
 from sentence_transformers.cross_encoder.evaluation import CEBinaryClassificationEvaluator
 
+print("Importing project files...")
 from config import ModelConfig
 from dataset import load_pairs, make_examples, split_dataset
 
+print("All imports completed")
+
 
 def main():
+    print("Loading config...")
     config = ModelConfig()
+
+    print(f"Looking for dataset at: {config.data_path}")
+
+    if not os.path.exists(config.data_path):
+        raise FileNotFoundError(
+            f"Training CSV not found: {config.data_path}\n"
+            "Move your CSV to data/training_pairs/student_professor_pairs.csv"
+        )
+
     os.makedirs(config.output_dir, exist_ok=True)
 
     print("Loading dataset...")
     df = load_pairs(config)
+
+    print(f"Loaded {len(df)} rows")
+    print(df.head())
+
     train_df, test_df = split_dataset(df, config)
 
     print(f"Training examples: {len(train_df)}")
