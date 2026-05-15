@@ -10,15 +10,24 @@
 # # HTML 解析库
 # beautifulsoup4==4.12.2
 
-playwright==1.40.0
-requests==2.31.0
-brotli==1.1.0
-beautifulsoup4==4.12.2
-pandas
-scikit-learn
 torch
+torchvision
+torchaudio
+
 sentence-transformers
 transformers
 accelerate
+
+pandas
+numpy
+scikit-learn
+
 flask
 flask-cors
+
+requests
+beautifulsoup4
+lxml
+
+playwright
+brotli

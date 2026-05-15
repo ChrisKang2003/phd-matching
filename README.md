@@ -1,257 +1,363 @@
-# 教授信息爬取系统
+# Rightfit PhD
 
-基于四层架构（发现 → 抽取 → 归一化 → 更新）的教授信息爬取系统，支持从多个学校、多个系批量爬取教授信息。
+AI-powered student–professor recommendation system using web crawling, OpenAlex enrichment, and transformer-based semantic ranking.
 
-## 系统架构
+---
 
-详细架构设计请参考 [ARCHITECTURE.md](ARCHITECTURE.md)
+# Overview
 
-### 核心模块
+Rightfit PhD is an NLP-based recommendation system designed to help graduate students identify professors whose research interests align with their academic goals.
 
-1. **Discovery（发现层）** - 发现faculty页面URL
-2. **Fetcher（抓取器）** - 静态/动态网页抓取
-3. **Parser（解析器）** - HTML解析和数据提取
-4. **Normalization（归一化层）** - 数据标准化和去重
-5. **Storage（存储层）** - 分层数据存储
-6. **Update（更新层）** - 增量更新和变更检测
-7. **Scheduler（调度器）** - 任务队列和调度
+The project combines:
 
-## 安装依赖
+* Faculty web crawling
+* Research-profile enrichment
+* Transformer-based semantic ranking
+* Web deployment
+
+The system crawls university faculty pages, enriches professor profiles using scholarly metadata from OpenAlex, and ranks professors using a fine-tuned MiniLM cross-encoder model.
+
+---
+
+# Features
+
+* Multi-university faculty crawling
+* OpenAlex publication/topic enrichment
+* Transformer-based recommendation model
+* Semantic student–professor matching
+* Flask backend API
+* React frontend website
+* Multi-discipline support
+* Single-command deployment
+
+---
+
+# Supported Disciplines
+
+* Computer Science & AI
+* Electrical Engineering
+* Biomedical Engineering
+* Business & Finance
+
+---
+
+# Supported Universities
+
+Example universities currently included:
+
+* Stanford University
+* MIT
+* Carnegie Mellon University
+* Cornell University
+* Princeton University
+* Johns Hopkins University
+* Duke University
+* Georgia Tech
+* UIUC
+* University of Michigan
+* University of Pennsylvania
+
+---
+
+# Project Architecture
+
+```text
+Faculty Websites
+        ↓
+Faculty Crawler
+        ↓
+Professor Dataset (CSV)
+        ↓
+OpenAlex Research Enrichment
+        ↓
+MiniLM Cross-Encoder Model
+        ↓
+Flask Backend API
+        ↓
+React Frontend Website
+```
+
+---
+
+# Repository Structure
+
+```text
+phd-matching/
+│
+├── crawler_to_csv.py
+├── requirements.txt
+├── README.md
+│
+├── data/
+│   ├── processed/
+│   │   └── professors.csv
+│   │
+│   └── training_pairs/
+│       └── student_professor_pairs.csv
+│
+├── model/
+│   ├── __init__.py
+│   ├── config.py
+│   ├── dataset.py
+│   ├── train_model.py
+│   ├── rank_professors.py
+│   ├── predict_match.py
+│   ├── evaluate.py
+│   └── classify_discipline.py
+│
+├── utils/
+│   └── enrich_professors_openalex.py
+│
+└── web/
+    ├── backend/
+    │   └── app.py
+    │
+    └── frontend/
+        ├── package.json
+        ├── index.html
+        └── src/
+            ├── App.jsx
+            └── style.css
+```
+
+---
+
+# Model Information
+
+## Base Model
+
+```text
+cross-encoder/ms-marco-MiniLM-L6-v2
+```
+
+## Why MiniLM?
+
+The MiniLM cross-encoder model was selected because:
+
+* Only 22M parameters
+* Can be fine-tuned on RTX 4060 GPUs
+* Strong semantic ranking performance
+* Efficient inference speed
+* Suitable for sentence-pair similarity tasks
+
+## Why Cross-Encoder?
+
+The cross-encoder jointly processes both:
+
+* student profile
+* professor profile
+
+This allows the model to capture token-level semantic relationships and generate higher-precision recommendation scores.
+
+---
+
+# Installation
+
+## 1. Clone Repository
+
+```bash
+git clone https://github.com/ChrisKang2003/phd-matching.git
+cd phd-matching
+```
+
+---
+
+## 2. Create Virtual Environment
+
+### Windows PowerShell
+
+```powershell
+py -3.13 -m venv .venv313
+.venv313\Scripts\activate
+```
+
+### Mac/Linux
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+```
+
+---
+
+## 3. Install Python Dependencies
 
 ```bash
 pip install -r requirements.txt
 ```
 
-## 配置
+If using Playwright:
 
-编辑 `config.json` 文件，配置要爬取的学校和系：
+```bash
+playwright install
+```
+
+---
+
+## 4. Install Frontend Dependencies
+
+```bash
+cd web/frontend
+npm install
+cd ../..
+```
+
+---
+
+# Running the Full Pipeline
+
+## Step 1: Crawl Faculty Data
+
+```bash
+python crawler_to_csv.py
+```
+
+Creates:
+
+```text
+data/processed/professors.csv
+```
+
+---
+
+## Step 2: Enrich Professor Profiles
+
+```bash
+python utils/enrich_professors_openalex.py
+```
+
+Creates:
+
+```text
+data/processed/professors_enriched.csv
+```
+
+---
+
+## Step 3: Train Recommendation Model
+
+```bash
+python model/train_model.py
+```
+
+Creates:
+
+```text
+model/checkpoints/rightfit_cross_encoder/
+```
+
+---
+
+## Step 4: Launch Website
+
+```bash
+python web/backend/app.py
+```
+
+Open:
+
+```text
+http://localhost:5000
+```
+
+---
+
+# Example Training Dataset
+
+The training dataset contains labeled student–professor pairs.
+
+Example format:
+
+```csv
+student_profile,professor_profile,label
+"Interested in machine learning and NLP", "Research interests include NLP and transformers",1
+```
+
+The project currently includes:
+
+* 1000 student–professor pairs
+* 275+ professor profiles
+* 11 universities
+
+---
+
+# Technologies Used
+
+## Machine Learning
+
+* PyTorch
+* SentenceTransformers
+* Transformers
+* Scikit-learn
+
+## Web Development
+
+* Flask
+* React
+* Vite
+
+## Data Collection
+
+* Requests
+* BeautifulSoup
+* OpenAlex API
+
+---
+
+# API Endpoints
+
+## Health Check
+
+```text
+GET /api/health
+```
+
+---
+
+## Generate Recommendations
+
+```text
+POST /api/recommend
+```
+
+Request Body:
 
 ```json
 {
-  "universities": [
-    {
-      "name": "清华大学",
-      "code": "THU",
-      "discovery": {
-        "enabled": true
-      },
-      "departments": [
-        {
-          "name": "计算机科学与技术系",
-          "code": "CS",
-          "faculty_list_url": "https://www.tsinghua.edu.cn/cs/faculty",
-          "adapter": null,
-          "enabled": true
-        }
-      ]
-    }
-  ]
+  "student_profile": "I am interested in machine learning and NLP",
+  "discipline": "auto",
+  "top_k": 5
 }
 ```
 
-## 使用方法
+---
 
-### 基本使用
+# Future Improvements
 
-```bash
-python main.py
-```
+Potential future improvements include:
 
-### 指定配置文件
+* Larger training datasets
+* Real-time publication updates
+* Citation graph analysis
+* Better topic clustering
+* Cloud deployment
+* User authentication
+* GPU inference optimization
+* Multi-language support
 
-```bash
-python main.py -c custom_config.json
-```
+---
 
-## 数据存储
+# Authors
 
-爬取的数据存储在 `data/` 目录下：
+Jash Italiya, 
+Xiangpeng Deng, 
+Christopher Kang
 
-```
-data/
-├── raw_pages/          # 原始HTML页面
-│   └── {university}/{department}/
-├── entities/           # 实体数据
-│   └── professors.json
-├── relations/          # 关系数据
-│   ├── professor_department.json
-│   ├── professor_publication.json
-│   └── professor_lab.json
-└── versions/           # 版本数据（用于回溯）
-    └── {university}/{department}/
-```
 
-## 功能特性
+Stevens Institute of Technology
 
-### 1. 自动发现
-- 从配置文件读取学校、系、URL列表
-- 支持启用/禁用特定学校或系
+---
 
-### 2. 智能抓取
-- 优先使用静态抓取（快速）
-- 自动检测需要JS渲染的页面，切换到动态抓取
-- 支持重试和错误处理
+# License
 
-### 3. 通用解析
-- 基于语义DOM特征的通用解析规则
-- 支持站点特定适配器（可扩展）
-- 提取结构化字段和文本字段
-
-### 4. 数据归一化
-- 职称统一（Professor/Associate Professor等）
-- 部门名称规范化
-- 姓名解析（处理中间名、缩写）
-- 邮箱还原（处理各种隐藏格式）
-- 实体消歧（合并重复记录）
-
-### 5. 增量更新
-- 列表页：每14天更新一次
-- 个人页：每60天更新一次
-- 变更检测：通过hash检测内容变化
-- 只更新变化的内容
-
-### 6. 任务调度
-- 优先级队列（新学校 > 列表页 > 个人页）
-- 并发控制（可配置）
-- 重试机制（指数退避）
-- 黑名单机制
-
-## 配置说明
-
-### Scheduler配置
-
-```json
-"scheduler": {
-  "max_concurrent_departments": 3,  // 最大并发数
-  "retry_times": 3,                  // 重试次数
-  "retry_delay": 5,                  // 重试延迟（秒）
-  "delay_between_requests": 2        // 请求间隔（秒）
-}
-```
-
-### Fetcher配置
-
-```json
-"fetcher": {
-  "prefer_static": true,      // 优先使用静态抓取
-  "timeout": 30,              // 超时时间（秒）
-  "retry_times": 3,           // 重试次数
-  "wait_for_load": true,      // 等待页面加载
-  "wait_timeout": 10000       // 等待超时（毫秒）
-}
-```
-
-### Parser配置
-
-```json
-"parser": {
-  "use_llm_fallback": false,        // 是否使用LLM辅助
-  "confidence_threshold": 0.7       // 置信度阈值
-}
-```
-
-### Update配置
-
-```json
-"update": {
-  "list_page_interval_days": 14,    // 列表页更新间隔（天）
-  "profile_page_interval_days": 60, // 个人页更新间隔（天）
-  "enable_change_detection": true    // 启用变更检测
-}
-```
-
-### Storage配置
-
-```json
-"storage": {
-  "save_raw_html": true,      // 保存原始HTML
-  "save_screenshot": false,   // 保存截图
-  "save_metadata": true        // 保存元数据
-}
-```
-
-## 扩展开发
-
-### 添加站点适配器
-
-在 `Web_analys/parser/site_adapters/` 目录下创建新的适配器：
-
-```python
-from parser.base_parser import BaseParser
-
-class CustomAdapter(BaseParser):
-    def parse(self, html: str, url: str) -> Dict[str, Any]:
-        # 实现特定站点的解析逻辑
-        pass
-    
-    def get_confidence(self, html: str, url: str) -> float:
-        # 返回置信度
-        return 0.9
-```
-
-然后在配置文件中指定适配器：
-
-```json
-{
-  "departments": [
-    {
-      "name": "计算机系",
-      "faculty_list_url": "https://example.com/faculty",
-      "adapter": "custom_adapter",
-      "enabled": true
-    }
-  ]
-}
-```
-
-## 日志
-
-日志文件保存在 `logs/` 目录下：
-
-- `professor_crawler.log` - 主程序日志
-
-## 注意事项
-
-1. **反爬虫**：系统已实现反检测功能，但仍需注意：
-   - 控制请求频率
-   - 遵守网站的robots.txt
-   - 不要过度频繁访问
-
-2. **数据质量**：
-   - 归一化层对匹配准确率影响很大
-   - 建议定期检查实体消歧结果
-   - 可以手动调整解析规则
-
-3. **性能优化**：
-   - 优先使用静态抓取
-   - 合理设置并发数
-   - 启用变更检测避免重复解析
-
-## 故障排除
-
-### 浏览器连接失败
-- 确保Chrome或Edge浏览器已安装
-- 检查浏览器调试端口是否正确
-- 尝试手动启动浏览器并启用远程调试
-
-### 解析失败
-- 检查HTML结构是否变化
-- 考虑添加站点特定适配器
-- 降低置信度阈值
-
-### 存储空间不足
-- 可以关闭截图保存
-- 定期清理旧版本数据
-- 只保存必要的元数据
-
-## 后续开发
-
-- [ ] LLM辅助解析
-- [ ] 向量搜索索引
-- [ ] 数据导出功能
-- [ ] Web界面
-- [ ] 监控和报告
-
-## 许可证
-
-MIT License
+This project is intended for academic and educational purposes.
